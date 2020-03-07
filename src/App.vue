@@ -1,28 +1,33 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png" />
-    <HelloWorld msg="Welcome to Your Vue.js App" />
+    <AppContent></AppContent>
   </div>
 </template>
 
 <script>
-import HelloWorld from "./components/HelloWorld.vue";
-
+import AppContent from '@/components/AppContent'
 export default {
-  name: "App",
-  components: {
-    HelloWorld
-  }
-};
+	name: 'App',
+	components: {
+		AppContent
+	}
+}
 </script>
-
 <style lang="scss">
+@import "@/assets/style/common.scss";
+@import "material-icons/iconfont/material-icons.scss";
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+  padding: 3rem;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+}
+body {
+  overflow-x: hidden;
+  min-height: 100vh;
+  width: 100vw;
+  background: url("../src/assets/img/background_1.svg") top left no-repeat,
+    url("../src/assets/img/background_2.svg") bottom right no-repeat;
+  background-size: 100%, 100%;
 }
 </style>
