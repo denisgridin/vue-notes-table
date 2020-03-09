@@ -20,14 +20,10 @@ export default {
 			draggableBox: null,
 			parent: {},
 			boxCoords: {},
-			position: 'absolute',
 			left: 0,
 			top: 0,
-			shiftX: 0,
-			shiftY: 0,
 			isMove: false,
-			isDrag: false,
-			checkTimeout: null
+			isDrag: false
 		}
 	},
 	mounted () {
@@ -39,7 +35,6 @@ export default {
 	computed: {
 		dragStyles() {
 			return {
-				position: this.position,
 				top: this.top + 'px',
 				left: this.left + 'px'
 			}
@@ -66,19 +61,34 @@ export default {
 			this.$set(this.boxCoords, 'top', event.clientY - elem.offsetTop)
 			this.$set(this.boxCoords, 'left', event.clientX - elem.offsetLeft)
 		},
-		isInParent (top, left) {
+	  getDragInfo (top, left) {
 			const element = this.$refs['draggable']
-			return top > 0 && left > 0 && this.parent.height > top + element.clientHeight && this.parent.width > left + element.clientWidth
+			let info = {}
+			info.isInParent = top > 0 && left > 0 && this.parent.height > top + element.clientHeight && this.parent.width > left + element.clientWidth
+			info.top = top
+			info.left = left
+			if (top < 0) {
+				info.top = 0
+			}
+			if (this.parent.height < top + element.clientHeight) {
+				info.top = this.parent.height - element.clientHeight
+			}
+			if (left < 0) {
+				info.left = 0
+			}
+			if (this.parent.width < left + element.clientWidth) {
+				info.left = this.parent.width - element.clientWidth
+			}
+			return info
 		},
 		drag (event) {
 			if (event.screenX > 0) {
 				if (this.isDrag) {
 					const top = event.clientY - this.boxCoords.top
 					const left = event.clientX - this.boxCoords.left
-					if (this.isInParent(top, left)) {
-						this.$set(this, 'top', top)
-						this.$set(this, 'left', left)
-					}
+					const dragInfo = this.getDragInfo(top, left)
+					this.$set(this, 'top', dragInfo.top)
+					this.$set(this, 'left', dragInfo.left)
 				} else {
 					this.isDrag = true
 				}
@@ -91,6 +101,16 @@ export default {
 <style lang="scss" scoped>
 	.draggable {
 		cursor: grab;
+		position: absolute;
+		box-sizing: border-box;
+		
+		&_passive {
+			box-shadow: 0px 4px 10px rgba(128, 128, 128, 0.25);
+		}
+		
+		&_active {
+			box-shadow: 0px 4px 20px rgba(128, 128, 128, 0.25);
+		}
 	}
 	
 	.hidden-drag-ghost {
@@ -102,13 +122,5 @@ export default {
 	
 	.grabbed {
 		cursor: grabbing!important;
-	}
-	
-	.draggable_passive {
-		box-shadow: 0px 4px 10px rgba(128, 128, 128, 0.25);
-	}
-	
-	.draggable_active {
-		box-shadow: 0px 4px 20px rgba(128, 128, 128, 0.25);
 	}
 </style>
